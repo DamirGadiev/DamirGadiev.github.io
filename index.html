@@ -3,16 +3,27 @@
   <head>
     <title>Leaf Engine Demo</title>
     <link rel="stylesheet" type="text/css" href="css/style.css">
-    <script type="text/javascript" scr="misc/index.js"></script>
+    <script src="http://www.myphysicsblog.com/leaf/core/assets/vendor/jquery/jquery.min.js?v=2.2.4"></script>
+    <script src="http://www.myphysicsblog.com/leaf/modules/custom/leafengine/js/three.js?v=1.x"></script>
+    <script src="http://www.myphysicsblog.com/leaf/modules/custom/leafengine/js/leafutils.js?v=1.x"></script>
+    <script src="http://www.myphysicsblog.com/leaf/modules/custom/leafengine/js/leafcore.js?v=1.x"></script>
+    <script src="http://www.myphysicsblog.com/leaf/modules/custom/leafengine/js/leafplayer.js?v=1.x"></script>
+    <script src="http://www.myphysicsblog.com/leaf/modules/custom/leafengine/js/leafengine.js?v=1.x"></script>
+    <script type="text/javascript" src="misc/index.js"></script>
   </head>
   <body>
     <div id="header"></div>
     <div id="content">
-      <div class="center-message">
-        <strong><a href="https://github.com/DamirGadiev/leafengine" class="btn">LeafEngine</a></strong><br/>
-        This is promo page for leafengine<br/>
-        Tool built on top of <b><a href="https://github.com/mrdoob/three.js/">three.js</a></b>
+      <div id="block-leafengine-clean-content">
+        <div id="player-container" class="player-container play-nid-2" data-nid="2">
+          <canvas id="player-canvas"></canvas>
+        </div>
       </div>
+      <!--<div class="center-message">-->
+        <!--<strong><a href="https://github.com/DamirGadiev/leafengine" class="btn">LeafEngine</a></strong><br/>-->
+        <!--This is promo page for leafengine<br/>-->
+        <!--Tool built on top of <b><a href="https://github.com/mrdoob/three.js/">three.js</a></b>-->
+      <!--</div>-->
     </div>
     <div id="footer">
       &copy;Damir Gadiev
