@@ -1,2 +1,3 @@
-#Leafengine presentation page
-This is base demo holder for leafengine built on top of three.js
+# Personal web page.
+
+This is simple personal web-page built using <a href="https://threejs.org">three.js</a>.
