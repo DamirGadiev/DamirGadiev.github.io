@@ -2,6 +2,15 @@
  * Globals
  */
 
+/**
+ * Fonts
+ */
+
+@font-face {
+  font-family: "CachetStd Medium";
+  src: url("../fonts/CachetStd-Medium.otf");
+}
+
 /* Links */
 a,
 a:focus,
@@ -103,4 +112,12 @@ body {
  */
 .mastfoot {
   color: rgba(255, 255, 255, .5);
+}
+
+/**
+ * Content
+ */
+.disclaimer {
+  font-family: 'CachetStd Medium';
+  text-transform: uppercase;
 }
