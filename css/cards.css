@@ -79,5 +79,5 @@ body {
 
 .card-app-window {
     border-radius: 5px;
-    box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.2);
+    box-shadow: -6px -6px 16px rgba(255, 255, 255, 0.5), 6px 6px 16px rgba(209, 205, 199, 0.5);
 }
