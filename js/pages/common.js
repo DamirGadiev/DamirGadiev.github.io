@@ -64,3 +64,35 @@ try {
 catch (e) {
     console.log(e);
 }
+
+var query = `
+query {
+    nodeQuery(limit: 10, offset: 0, filter: {conditions: [{operator: EQUAL, field: "type", value: ["cards_set"]}]}) {
+      entities {
+        entityLabel,
+        fieldCards {
+          entity {
+            fieldCardText {
+              value,
+            }
+            fieldCardImage {
+              url
+            }
+          }
+        }
+      }
+    }
+  }`;
+
+fetch('http://localhost:8084/graphql', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+  },
+  body: JSON.stringify({
+    query
+  })
+})
+  .then(r => r.json())
+  .then(data => console.log('data returned:', data));
