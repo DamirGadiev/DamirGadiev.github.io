@@ -208,7 +208,21 @@ function main(fragmentShader) {
     camera.position.x = -4;
     camera.position.y = 1.2;
     earth.view();
-    earth.sphere.rotation.y = -Math.PI / 2;
+    earth.sphere.rotation.y = -4 * Math.PI/6;
+
+
+    var planeGeometry = new THREE.PlaneGeometry(100, 100, 80, 80);
+    // Wall texture.
+    var texture = new THREE.TextureLoader().load('/img/textures/star.jpg');
+    texture.wrapS = THREE.RepeatWrapping;
+    texture.repeat.set( 2, 2 );
+
+    var planeMaterial = new THREE.MeshLambertMaterial( { map: texture } );
+    var plane = new THREE.Mesh(planeGeometry, planeMaterial);
+    // rotate and position the plane
+    plane.rotation.z = Math.PI / 6;
+    plane.position.set(0,0,-20);
+    scene.add(plane);
 
     window.addEventListener( 'resize', onWindowResize, false );
     document.addEventListener("keydown", onDocumentKeyDown, false);
