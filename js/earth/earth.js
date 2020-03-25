@@ -215,7 +215,7 @@ function main(fragmentShader) {
     // Wall texture.
     var texture = new THREE.TextureLoader().load('/img/textures/star.jpg');
     texture.wrapS = THREE.RepeatWrapping;
-    texture.repeat.set( 2, 2 );
+    texture.repeat.set( 4, 2 );
 
     var planeMaterial = new THREE.MeshLambertMaterial( { map: texture } );
     var plane = new THREE.Mesh(planeGeometry, planeMaterial);
