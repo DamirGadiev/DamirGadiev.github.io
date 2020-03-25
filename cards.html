@@ -1,26 +1,29 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Neumorphic cards test</title>
-        <link rel="stylesheet" href="/css/cards.css">
-        <link href="https://fonts.googleapis.com/css?family=Open+Sans|Raleway:800&display=swap" rel="stylesheet">
-    </head>
-    <body>
-        <script src="js/three.js"></script>
-        <div class="sidenav">
-            <a href="/index.html" class="back-link">Back</a>
-            <span class="content-label">Content</span>
-            <ul>
-                <li><a href="#">Card title</a></li>
-                <li><a href="#">Interactive card</a></li>
-                <li><a href="#">Lorem ipsum</a></li>
-                <li><a href="#">Dolor sit amet</a></li>
-            </ul>
-        </div>
-        <div class="page">
+
+<head>
+    <title>Neumorphic cards test</title>
+    <link rel="stylesheet" href="/css/cards.css">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans|Raleway:800&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <script src="js/three.js"></script>
+    <div class="sidenav">
+        <a href="/index.html" class="back-link">Back</a>
+        <span class="content-label">Content</span>
+        <ul>
+            <li><a href="#">Card title</a></li>
+            <li><a href="#">Interactive card</a></li>
+            <li><a href="#">Lorem ipsum</a></li>
+            <li><a href="#">Dolor sit amet</a></li>
+        </ul>
+    </div>
+    <div class="page">
+        <div class="cards-content">
             <div class="header">
                 <div class="card card-heading">
-                    <h2>Coordinates system</h2>
+                    <h2>Почему небо голубое?</h2>
                 </div>
             </div>
             <div class="cards-wrapper">
@@ -29,7 +32,11 @@
                         Card title
                     </div>
                     <div class="card-content">
-                        This effect is pretty easy to achieve by playing with two shadows, one at negative values while the other at positive. But for it to work our background cannot be fully black or fully white. It needs at least a tiny bit of tint so both dark and “light” shadows will be visible. You can use any hue for the background so it can be warmer or colder depending on your choice. But white and dark shadows have to be visible on it, if slightly.
+                        This effect is pretty easy to achieve by playing with two shadows, one at negative values while
+                        the other at positive. But for it to work our background cannot be fully black or fully white.
+                        It needs at least a tiny bit of tint so both dark and “light” shadows will be visible. You can
+                        use any hue for the background so it can be warmer or colder depending on your choice. But white
+                        and dark shadows have to be visible on it, if slightly.
                     </div>
                 </div>
                 <!-- <div class="card interactive-card">
@@ -49,15 +56,22 @@
                         Lorem ipsum
                     </div>
                     <div class="card-content">
-                        This effect is pretty easy to achieve by playing with two shadows, one at negative values while the other at positive. But for it to work our background cannot be fully black or fully white. It needs at least a tiny bit of tint so both dark and “light” shadows will be visible. You can use any hue for the background so it can be warmer or colder depending on your choice. But white and dark shadows have to be visible on it, if slightly.
+                        This effect is pretty easy to achieve by playing with two shadows, one at negative values while
+                        the other at positive. But for it to work our background cannot be fully black or fully white.
+                        It needs at least a tiny bit of tint so both dark and “light” shadows will be visible. You can
+                        use any hue for the background so it can be warmer or colder depending on your choice. But white
+                        and dark shadows have to be visible on it, if slightly.
                     </div>
                 </div>
                 <div class="card card-definition">
                     <div class="card-title">
-                        Definition
+                        Атмосфера
                     </div>
                     <div class="card-content">
-                        Definition - This effect is pretty easy to achieve by playing with two shadows, one at negative values while the other at positive. But for it to work our background cannot be fully black or fully white. It needs at least a tiny bit of tint so both dark and “light” shadows will be visible. You can use any hue for the background so it can be warmer or colder depending on your choice. But white and dark shadows have to be visible on it, if slightly.
+                        Тонкая прослойка газа на поверхности планеты. But for it to work our background cannot be fully black or
+                        fully white. It needs at least a tiny bit of tint so both dark and “light” shadows will be
+                        visible. You can use any hue for the background so it can be warmer or colder depending on your
+                        choice. But white and dark shadows have to be visible on it, if slightly.
                     </div>
                 </div>
                 <div class="card">
@@ -65,14 +79,23 @@
                         One more card
                     </div>
                     <div class="card-content">
-                        This effect is pretty easy to achieve by playing with two shadows, one at negative values while the other at positive. But for it to work our background cannot be fully black or fully white. It needs at least a tiny bit of tint so both dark and “light” shadows will be visible. You can use any hue for the background so it can be warmer or colder depending on your choice. But white and dark shadows have to be visible on it, if slightly.
+                        This effect is pretty easy to achieve by playing with two shadows, one at negative values while
+                        the other at positive. But for it to work our background cannot be fully black or fully white.
+                        It needs at least a tiny bit of tint so both dark and “light” shadows will be visible. You can
+                        use any hue for the background so it can be warmer or colder depending on your choice. But white
+                        and dark shadows have to be visible on it, if slightly.
                     </div>
                 </div>
             </div>
-            <div class="footer">
-
-            </div>
         </div>
-        <script src="js/pages/common.js"></script>
-    </body>
+        <div class="footer">
+
+        </div>
+    </div>
+    <canvas id="game-app"></canvas>
+    <!-- <script src="js/pages/common.js"></script> -->
+    <script src="js/three.js"></script>
+    <script src="js/earth/earth.js"></script>
+</body>
+
 </html>

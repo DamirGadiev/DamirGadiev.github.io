@@ -23,7 +23,7 @@ class Planet {
         this.createSphereMaterial();
         this.createSphere();
         this.createClouds();
-        this.createAtmosphere(0.65, 4, 0x93cfef)
+        this.createAtmosphere(0.5, 4, 0x93cfef)
     }
 
     createAtmosphere(intensity, fade, color) {
@@ -123,7 +123,7 @@ class Planet {
     addSpereTexture() {
         const that = this;
         this.textureLoader.load(
-            '/img/textures/earth_eq.jpg',
+            '/img/textures/earth.jpg',
             function(texture) {
                 that.sphereMaterial.map = texture;
                 that.sphereMaterial.needsUpdate = true;
@@ -183,11 +183,11 @@ class Planet {
 
 
 function main(fragmentShader) {
-    (function(){var script=document.createElement('script');script.onload=function(){var stats=new Stats();document.body.appendChild(stats.dom);requestAnimationFrame(function loop(){stats.update();requestAnimationFrame(loop)});};script.src='//mrdoob.github.io/stats.js/build/stats.min.js';document.head.appendChild(script);})();
+    // (function(){var script=document.createElement('script');script.onload=function(){var stats=new Stats();document.body.appendChild(stats.dom);requestAnimationFrame(function loop(){stats.update();requestAnimationFrame(loop)});};script.src='//mrdoob.github.io/stats.js/build/stats.min.js';document.head.appendChild(script);})();
     
     const canvas = document.querySelector('#game-app');
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
 
     const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -196,23 +196,46 @@ function main(fragmentShader) {
     let spotLight = new THREE.SpotLight(0xffffff, 1, 0, 10, 2);
     scene.add(spotLight);
         // Light Configurations
-    spotLight.position.set(8, -2, 4);
+    spotLight.position.set(8, -2, 9);
 
-    camera.position.z = 5;
     camera.lookAt(0, 0, 0);
 
     const earth = new Planet(scene, camera, 2);
     const EARTH_ANGLE = 0.409105177;
 
     camera.rotation.z = -EARTH_ANGLE;
+    camera.position.z = 12;
+    camera.position.x = -4;
+    camera.position.y = 1.2;
     earth.view();
+    earth.sphere.rotation.y = -Math.PI / 2;
 
     window.addEventListener( 'resize', onWindowResize, false );
+    document.addEventListener("keydown", onDocumentKeyDown, false);
 
     function onWindowResize(){
         camera.aspect = window.innerWidth / window.innerHeight;
         camera.updateProjectionMatrix();
         renderer.setSize( window.innerWidth, window.innerHeight );
+    }
+
+    // movement - please calibrate these values
+    var xSpeed = 0.1;
+    var ySpeed = 0.1;
+    function onDocumentKeyDown(event) {
+        var keyCode = event.which;
+        if (keyCode == 38) {
+            camera.position.y += ySpeed;
+            console.log(camera.position.z);
+        } else if (keyCode == 40) {
+            camera.position.y -= ySpeed;
+        } else if (keyCode == 39) {
+            camera.position.x -= xSpeed;
+        } else if (keyCode == 37) {
+            camera.position.x += xSpeed;
+        } else if (keyCode == 32) {
+            camera.position.set(0, 0, 0);
+        }
     }
 
     var animate = function () {

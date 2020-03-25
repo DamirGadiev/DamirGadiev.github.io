@@ -5,6 +5,13 @@ body {
     font-family: 'Raleway', sans-serif;
 }
 
+#game-app {
+    position: absolute;
+    z-index: -1;
+    top: 0px;
+    left: 0px;
+}
+
 .page {
     margin-left: 175px;
 }
@@ -38,6 +45,18 @@ body {
 .sidenav ul {
     list-style-type : none;
     padding: 0px;
+}
+
+.cards-content {
+    max-width: 585px;
+    background-color: #e3e3e3;
+    padding-top: 10px;
+    height: 100%;
+}
+
+.cards-wrapper {
+    overflow: auto;
+    height: 740px;
 }
 
 .card {
