@@ -10,7 +10,7 @@ class App {
 
         // Camera Setup
         this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        this.camera.position.set(0, 2, 5);
+        this.camera.position.set(0, 0, 2); // Zooming in closer (was 4)
 
         // Renderer Setup
         this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
@@ -46,8 +46,15 @@ class App {
         // Load the splat file. Replace '/models/splat.ply' with your actual file path.
         // If you haven't added the file yet, this will gracefully fail or show a log.
         try {
+            // Calculate quaternion for 180deg Y and 180deg Z rotation
+            const q = new THREE.Quaternion();
+            q.setFromEuler(new THREE.Euler(0, Math.PI, Math.PI));
+
             await this.splatViewer.addSplatScene('/models/splat.ply', {
                 'progressiveLoad': true,
+                'rotation': q.toArray(),
+                'scale': [20, 20, 20],
+                'position': [0, 0, 0] // Ensure centering at origin
             });
         } catch (e) {
             console.error("Gaussian Splat failed to load. Please ensure your .ply file is at /public/models/splat.ply", e);
