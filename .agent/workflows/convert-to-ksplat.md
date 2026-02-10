@@ -33,7 +33,11 @@ def convert_ply_to_ksplat(input_path, output_path=None):
             "3dgsconverter",
             "-i", input_path,
             "-o", output_path,
-            "-f", "ksplat"
+            "-f", "ksplat",
+            # ADVANCED PERFORMANCE OPTIONS:
+            "--compression", "2",      # Higher compression (0, 1, or 2)
+            "--sh", "1",               # Lower SH degree (Default 3, try 1 or 0 for faster rendering)
+            "--alpha-threshold", "10"  # Prune more transparent splats (Default is lower)
         ], check=True)
         print("Conversion successful!")
     except subprocess.CalledProcessError as e:
@@ -55,7 +59,7 @@ await this.splatViewer.addSplatScene('/models/splat.ksplat', {
 });
 ```
 
-### 💡 Why use .ksplat?
-- **Small size**: Much smaller than `.ply`.
-- **Fast loading**: Optimized for the `GaussianSplats3D` library.
-- **Lower memory**: Uses less VRAM on your visitors' devices.
+### 💡 Advanced Performance Tips
+- **Pruning**: Increasing `--alpha-threshold` (e.g., to 10 or 15) will remove more "noise" and transparent splats, which is the best way to speed up rendering.
+- **SH Degree**: Setting `--sh 1` or `--sh 0` significantly reduces the amount of work the GPU has to do per frame, though colors might look slightly flatter.
+- **Point Spacing**: Some converters allow decimating the point cloud based on distance (voxels), which can drastically reduce the point count for complex scenes.

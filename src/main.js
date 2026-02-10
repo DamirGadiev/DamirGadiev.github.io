@@ -40,7 +40,7 @@ class App {
             'renderer': this.renderer,
             'scene': this.scene,
             'antialiased': true,
-            'useBuiltInControls': true,
+            'useBuiltInControls': false, // Removed as requested
             'splatAlphaRemovalThreshold': 5, // Removes highly transparent splats for better performance
             'freeIntermediateSplatData': true, // Frees memory after loading
         });
@@ -99,7 +99,7 @@ class App {
         const time = this.clock.getElapsedTime();
 
         if (this.stars) {
-            this.stars.rotation.y = time * 0.02;
+            this.stars.rotation.y = time * 0.01;
         }
 
         // Update splat viewer before rendering
