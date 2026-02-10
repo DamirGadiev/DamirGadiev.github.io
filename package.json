@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/DamirGadiev/DamirGadiev.github.io#readme",
   "dependencies": {
+    "@mkkellogg/gaussian-splats-3d": "^0.4.7",
     "three": "^0.182.0",
     "vite": "^7.3.1"
   }
