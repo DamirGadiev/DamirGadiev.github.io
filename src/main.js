@@ -83,24 +83,73 @@ class App {
     }
 
     addObjects() {
-        // Background Stars - Reduced count to 2500 and metallic golden color
-        const geometry = new THREE.BufferGeometry();
-        const vertices = [];
-        for (let i = 0; i < 2500; i++) {
-            vertices.push(THREE.MathUtils.randFloatSpread(100));
-            vertices.push(THREE.MathUtils.randFloatSpread(100));
-            vertices.push(THREE.MathUtils.randFloatSpread(100));
-        }
-        geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
-        const material = new THREE.PointsMaterial({
-            color: 0xffcc00, // Metallic Gold
-            size: 0.1,
+        // Background Stars as tiny icosahedrons
+        const starGeo = new THREE.IcosahedronGeometry(0.06, 0);
+        const starMat = new THREE.MeshStandardMaterial({
+            color: 0xffcc00,
+            emissive: 0xffcc00,
+            emissiveIntensity: 0.4,
+            metalness: 0.8,
+            roughness: 0.3,
             transparent: true,
             opacity: 0.6,
-            depthWrite: false, // CRITICAL: Stars should not write to depth buffer
+            depthWrite: false,
             depthTest: true
         });
-        this.stars = new THREE.Points(geometry, material);
+
+        const count = 2500;
+        // Inject wave displacement into stars (onBeforeCompile works for built-in materials)
+        this.starWaveUniforms = {
+            uWaveTime: { value: 0.0 },
+            uWaveCenter: { value: new THREE.Vector3(0, 0, 0) },
+            uWaveIntensity: { value: 0.0 }
+        };
+        const starUniforms = this.starWaveUniforms;
+        starMat.onBeforeCompile = (shader) => {
+            shader.uniforms.uWaveTime = starUniforms.uWaveTime;
+            shader.uniforms.uWaveCenter = starUniforms.uWaveCenter;
+            shader.uniforms.uWaveIntensity = starUniforms.uWaveIntensity;
+
+            shader.vertexShader = `
+                uniform float uWaveTime;
+                uniform vec3 uWaveCenter;
+                uniform float uWaveIntensity;
+            ` + shader.vertexShader;
+
+            shader.vertexShader = shader.vertexShader.replace(
+                '#include <begin_vertex>',
+                `
+                #include <begin_vertex>
+                if (uWaveIntensity > 0.0) {
+                    vec3 worldPos = (instanceMatrix * vec4(position, 1.0)).xyz;
+                    float wDist = distance(worldPos.xy, uWaveCenter.xy);
+                    float waveFront = uWaveTime * 7.5;
+                    float ringDist = abs(wDist - waveFront);
+                    float ring = exp(-ringDist * ringDist * 0.5);
+                    float oscillation = sin(wDist * 2.0 - uWaveTime * 6.0);
+                    float disp = oscillation * ring * uWaveIntensity;
+                    transformed.z += disp;
+                    transformed.x += disp * 0.3 * cos(wDist * 12.0);
+                    transformed.y += disp * 0.3 * sin(wDist * 12.0);
+                }
+                `
+            );
+            console.log('✅ Star wave shader injected!');
+        };
+
+        this.stars = new THREE.InstancedMesh(starGeo, starMat, count);
+        const dummy = new THREE.Object3D();
+        for (let i = 0; i < count; i++) {
+            dummy.position.set(
+                THREE.MathUtils.randFloatSpread(100),
+                THREE.MathUtils.randFloatSpread(100),
+                THREE.MathUtils.randFloatSpread(100)
+            );
+            const s = 0.5 + Math.random() * 1.0; // Random scale variation
+            dummy.scale.set(s, s, s);
+            dummy.updateMatrix();
+            this.stars.setMatrixAt(i, dummy.matrix);
+        }
         this.scene.add(this.stars);
     }
 
@@ -127,8 +176,8 @@ class App {
             this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
         }
 
-        // Trigger the "Water Surface" Ripple
-        this.ripple.center.set(this.mouse.x, this.mouse.y);
+        // Store NDC click position directly — the shader will compute distance in NDC space
+        this.ripple.ndcCenter = new THREE.Vector2(this.mouse.x, this.mouse.y);
         this.ripple.time = 0;
         this.ripple.active = true;
     }
@@ -171,20 +220,28 @@ class App {
 
             // Inject wave shader directly into the ShaderMaterial
             // (onBeforeCompile does NOT work with THREE.ShaderMaterial — only with built-in materials)
-            if (splatMesh && splatMesh.material && !splatMesh.material.userData.waveInjected) {
+            if (splatMesh && splatMesh.material && splatMesh.material.uniforms && !splatMesh.material.userData.waveInjected) {
                 this.injectWaveShader(splatMesh);
             }
 
             // Update wave uniforms every frame
+            const waveIntensity = this.ripple.active ? (1.0 - this.ripple.time / 2.0) * 1.0 : 0.0;
+            const waveTime = this.ripple.time;
+            const ndcCenter = this.ripple.ndcCenter || new THREE.Vector2(0, 0);
+
             if (splatMesh && splatMesh.material && splatMesh.material.userData.waveInjected) {
                 const uniforms = splatMesh.material.uniforms;
-                if (this.ripple.active) {
-                    uniforms.uWaveTime.value = this.ripple.time;
-                    uniforms.uWaveCenter.value.set(this.ripple.center.x, this.ripple.center.y);
-                    uniforms.uWaveIntensity.value = (1.0 - this.ripple.time / 2.0) * 1.0;
-                } else {
-                    uniforms.uWaveIntensity.value = 0.0;
-                }
+                uniforms.uWaveTime.value = waveTime;
+                uniforms.uWaveCenter.value.set(ndcCenter.x, ndcCenter.y);
+                uniforms.uWaveIntensity.value = waveIntensity;
+            }
+
+            // Update star wave uniforms (stars use world space, unproject for them)
+            if (this.starWaveUniforms) {
+                this.starWaveUniforms.uWaveTime.value = waveTime;
+                // For stars, approximate world position from NDC
+                this.starWaveUniforms.uWaveCenter.value.set(ndcCenter.x * 2.0, ndcCenter.y * 2.0, 0);
+                this.starWaveUniforms.uWaveIntensity.value = waveIntensity;
             }
 
             this.splatViewer.update();
@@ -218,23 +275,27 @@ uniform float uWaveIntensity;
         // We inject displacement of splatCenter just before it.
         const anchor = 'vec4 viewCenter = transformModelViewMatrix * vec4(splatCenter, 1.0);';
         const waveLogic = `
-            // --- Wave Displacement ---
+            // --- Wave Displacement (distance in NDC space) ---
+            // First, project splatCenter to NDC just for distance calculation
+            vec4 _wvCenter = transformModelViewMatrix * vec4(splatCenter, 1.0);
+            vec4 _wcCenter = projectionMatrix * _wvCenter;
+            vec2 _ndcPos = _wcCenter.xy / _wcCenter.w;
+
             if (uWaveIntensity > 0.0) {
-                // Distance from click point (NDC-ish coords mapped to world XY)
-                float wDist = distance(splatCenter.xy, uWaveCenter * 10.0);
-                // Expanding ring: wave front moves outward with time
-                float waveFront = uWaveTime * 7.5;
+                // Distance in screen space (NDC) — matches mouse coords exactly
+                float wDist = distance(_ndcPos, uWaveCenter);
+                // Expanding ring
+                float waveFront = uWaveTime * 1.5;
                 float ringDist = abs(wDist - waveFront);
-                // Smooth ring shape with falloff
-                float ring = exp(-ringDist * ringDist * 0.5);
-                // Oscillation within the ring
-                float oscillation = sin(wDist * 2.0 - uWaveTime * 6.0);
-                // Combine: displacement along Z (perpendicular to surface)
+                // Wide ring envelope
+                float ring = exp(-ringDist * ringDist * 18.0);
+                // Low-frequency oscillation
+                float oscillation = sin(wDist * 25.0 - uWaveTime * 8.0);
+                // Displacement in local space
                 float displacement = oscillation * ring * uWaveIntensity;
-                splatCenter.z += displacement;
-                // Subtle XY jitter for organic feel  
-                splatCenter.x += displacement * 0.3 * cos(wDist * 12.0);
-                splatCenter.y += displacement * 0.3 * sin(wDist * 12.0);
+                splatCenter.z += displacement * 0.3;
+                splatCenter.x += displacement * 0.1 * cos(wDist * 12.0);
+                splatCenter.y += displacement * 0.1 * sin(wDist * 12.0);
             }
             // --- End Wave ---
             vec4 viewCenter = transformModelViewMatrix * vec4(splatCenter, 1.0);`;
