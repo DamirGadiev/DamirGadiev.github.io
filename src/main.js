@@ -41,6 +41,8 @@ class App {
             'scene': this.scene,
             'antialiased': true,
             'useBuiltInControls': true,
+            'splatAlphaRemovalThreshold': 5, // Removes highly transparent splats for better performance
+            'freeIntermediateSplatData': true, // Frees memory after loading
         });
 
         // Load the splat file. Replace '/models/splat.ply' with your actual file path.
@@ -50,7 +52,7 @@ class App {
             const q = new THREE.Quaternion();
             q.setFromEuler(new THREE.Euler(0, Math.PI, Math.PI));
 
-            await this.splatViewer.addSplatScene('/models/splat.ply', {
+            await this.splatViewer.addSplatScene('/models/splat.ksplat', {
                 'progressiveLoad': true,
                 'rotation': q.toArray(),
                 'scale': [20, 20, 20],
